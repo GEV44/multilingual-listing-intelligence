@@ -1,0 +1,10 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      LI_EXTRACTOR: rules          # 'hybrid' needs the 'hf' extra baked into the image
+      LI_DEDUP_THRESHOLD: "0.80"
+      LI_SPEC_ONLY_THRESHOLD: "0.90"
+    restart: unless-stopped
