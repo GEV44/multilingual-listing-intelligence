@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Sequence
 
 import numpy as np
+import numpy.typing as npt
 
 from .match import FEATURES
 
@@ -27,15 +28,15 @@ def fit_weights(
     y = np.array([1.0 if g >= 2 else 0.0 for _, g in rows])
     if y.min() == y.max():
         raise ValueError("training labels are all identical")
-    w = np.zeros(x.shape[1])
+    w: npt.NDArray[np.float64] = np.zeros(x.shape[1])
     b = 0.0
     for _ in range(epochs):
         p = 1 / (1 + np.exp(-(x @ w + b)))
         grad = x.T @ (p - y) / len(y) + l2 * w
-        w -= lr * grad
+        w = w - lr * grad
         b -= lr * float(np.mean(p - y))
-    w = np.clip(w, 0, None)
-    total = float(w.sum())
+    clipped = np.clip(w, 0, None)
+    total = float(clipped.sum())
     if total == 0:
         raise ValueError("all learned weights are non-positive")
-    return {k: float(v / total) for k, v in zip(FEATURES, w, strict=True)}
+    return {k: float(v / total) for k, v in zip(FEATURES, clipped, strict=True)}

@@ -13,6 +13,7 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 import numpy as np
+import numpy.typing as npt
 from PIL import Image
 
 from .config import Settings
@@ -22,12 +23,12 @@ _SIZE = 32
 _LOW = 8
 
 
-def _dct_matrix(n: int) -> np.ndarray:
+def _dct_matrix(n: int) -> npt.NDArray[np.float64]:
     k = np.arange(n)[:, None]
     i = np.arange(n)[None, :]
     m = np.cos(np.pi * (2 * i + 1) * k / (2 * n)) * np.sqrt(2 / n)
     m[0] /= np.sqrt(2)
-    return m  # type: ignore[no-any-return]
+    return np.asarray(m, dtype=np.float64)
 
 
 _DCT = _dct_matrix(_SIZE)
